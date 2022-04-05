@@ -1,0 +1,60 @@
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+   "userName": "juan_perez"
+}
+
+###
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+"userName": "pedro_gomez"
+}
+
+###
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userName": "maria_avila"
+}
+
+###
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userName": "lucero_suarez"
+}
+
+### CREACION DE TWEET
+
+POST http://localhost:8080/api/tweet
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": 1,
+  "tweetText": "Nuevo tweet 4/abr 100"
+}
+
+### FOLLOWING
+
+POST http://localhost:8080/api/follows
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userFollowerId": 4,
+  "userFolloweeId": 1
+}
+
+### TIMELINE
+GET http://localhost:8080/api/users/timeline/3
+Accept: application/json
