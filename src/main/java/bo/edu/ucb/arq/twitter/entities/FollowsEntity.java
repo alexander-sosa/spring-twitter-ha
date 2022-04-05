@@ -1,11 +1,12 @@
 package bo.edu.ucb.arq.twitter.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "follows", schema = "tweets", catalog = "")
-public class FollowsEntity {
+public class FollowsEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "follow_id", nullable = false)
