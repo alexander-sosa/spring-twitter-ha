@@ -1,12 +1,13 @@
+### Creating user juan_perez
 POST http://localhost:8080/api/users
 Content-Type: application/json
 Accept: application/json
 
 {
-   "userName": "juan_perez"
+   "userName": "alexander-sosa"
 }
 
-###
+### Creating user pedro_gomez
 POST http://localhost:8080/api/users
 Content-Type: application/json
 Accept: application/json
@@ -15,7 +16,7 @@ Accept: application/json
 "userName": "pedro_gomez"
 }
 
-###
+### Creating user maria_avila
 POST http://localhost:8080/api/users
 Content-Type: application/json
 Accept: application/json
@@ -24,28 +25,17 @@ Accept: application/json
   "userName": "maria_avila"
 }
 
-###
-POST http://localhost:8080/api/users
-Content-Type: application/json
-Accept: application/json
-
-{
-  "userName": "lucero_suarez"
-}
-
-### CREACION DE TWEET
-
+### Creating a tweet
 POST http://localhost:8080/api/tweet
 Content-Type: application/json
 Accept: application/json
 
 {
   "userId": 1,
-  "tweetText": "Nuevo tweet 4/abr 100"
+  "tweetText": "probando de nuevo mmgv x2"
 }
 
-### FOLLOWING
-
+### Following
 POST http://localhost:8080/api/follows
 Content-Type: application/json
 Accept: application/json
@@ -55,6 +45,6 @@ Accept: application/json
   "userFolloweeId": 1
 }
 
-### TIMELINE
-GET http://localhost:8080/api/users/timeline/3
+### Getting timeline...
+GET http://localhost:8080/api/users/timeline/2
 Accept: application/json

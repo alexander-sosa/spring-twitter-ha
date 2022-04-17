@@ -38,6 +38,7 @@ public class TwitterBl {
         //Buscamos si existe el user_id en la BBDD
         Optional<UsersEntity>  usersEntityOptional = this.usersRepository.findById(userId);
         if(usersEntityOptional.isPresent()) { // me retorno un valor
+            System.out.println("Existe un usuario");
             UsersEntity usersEntity = usersEntityOptional.get();
             // Creo la entidad que representa al Tweet
             TweetsEntity tweetsEntity = new TweetsEntity();
@@ -45,13 +46,14 @@ public class TwitterBl {
             tweetsEntity.setTweetText(text);
             // Lo persisto en BBDD
             tweetsRepository.save(tweetsEntity);
+            System.out.println("Se acaba de guardar el tweet en bdd");
 
             // *************** GESTION DEL CACHE ************** //
-
             // Luego de escribir el tweet procedo a colocar el mismo en la lista de tweets de todos
             // los usuario seguidores, para eso voy a buscarlos a BBDD
 
             // Buscamos a todos los seguidores
+            System.out.println("Buscando seguidores...");
             List<UsersEntity> followers = followsRepository.findAllFollowersByUserId(userId);
 
             // De cuales de estos seguidores, ya he guardado en cache tu timeline
@@ -63,14 +65,14 @@ public class TwitterBl {
                 if (value != null) {
                     // Agregar a la lista de tweets extraida: Cache.ValueWrapper
                     //  el ultimo tweet que se esta insertando.
-
 //                    System.out.println("El valor que sacamos del cache para la llave: " + follower.getUserId()
 //                            + " fue: " + value.get());
 //                    System.out.println("El tipo de dato para el key : " + follower.getUserId()
 //                            + " fue: " + value.get().getClass().getName());
 
+//                    System.out.println("Este está en cache...");
                     List<TweetsEntity> tweetsEntities = (ArrayList<TweetsEntity>) value.get();
-                    tweetsEntities.add(tweetsEntity);
+                    tweetsEntities.add(0, tweetsEntity);
                 } // En caso contrrario el usuario no esta en cache.
             }
         } else { // no hay usuario

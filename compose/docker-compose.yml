@@ -1,0 +1,37 @@
+version: '2'
+
+networks:
+  ucb-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.20.0.0/16"
+          gateway: "10.20.0.1"
+
+services:
+  twitter-spring:
+    image: alexandersosa/node-cache:1.0.2
+    ports:
+      - "8080:8080"
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/tweets?useSSL=false"
+      - "SPRING_DATASOURCE_USERNAME=root"
+      - "SPRING_DATASOURCE_PASSWORD=1234"
+      - "SPRING_REDIS_HOST=redis-cache"
+      - "SPRING_JPA_HIBERNATE_DDL-AUTO=update"
+    networks:
+      - ucb-net
+
+  mysql-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "twitter"
+    networks:
+      - ucb-net
+
+  redis-cache:
+    image: redis:6.2.1
+    networks:
+      - ucb-net
