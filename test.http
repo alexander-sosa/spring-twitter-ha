@@ -14,7 +14,7 @@ Accept: application/json
 
 {
   "userId": 6,
-  "tweetText": "probando desde el redis hdtpm 5"
+  "tweetText": "probando desde el redis hdtpm 777"
 }
 
 ### Following...

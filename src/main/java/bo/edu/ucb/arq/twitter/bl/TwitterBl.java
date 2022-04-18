@@ -6,6 +6,8 @@ import bo.edu.ucb.arq.twitter.dao.UsersRepository;
 import bo.edu.ucb.arq.twitter.entities.FollowsEntity;
 import bo.edu.ucb.arq.twitter.entities.TweetsEntity;
 import bo.edu.ucb.arq.twitter.entities.UsersEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class TwitterBl {
+
+    private static final Logger logger = LoggerFactory.getLogger(TwitterBl.class);
 
     private UsersRepository usersRepository;
     private TweetsRepository tweetsRepository;
@@ -40,7 +44,6 @@ public class TwitterBl {
         //Buscamos si existe el user_id en la BBDD
         Optional<UsersEntity>  usersEntityOptional = this.usersRepository.findById(userId);
         if(usersEntityOptional.isPresent()) { // me retorno un valor
-            System.out.println("Existe el usuario");
             UsersEntity usersEntity = usersEntityOptional.get();
             // Creo la entidad que representa al Tweet
             TweetsEntity tweetsEntity = new TweetsEntity();
@@ -48,16 +51,14 @@ public class TwitterBl {
             tweetsEntity.setTweetText(text);
             // Lo persisto en BBDD
             tweetsRepository.save(tweetsEntity);
-            System.out.println("Se acaba de guardar el tweet en bdd");
+            logger.info("Tweet saved on db");
 
             try{
-
                 // *************** GESTION DEL CACHE ************** //
                 // Luego de escribir el tweet procedo a colocar el mismo en la lista de tweets de todos
                 // los usuario seguidores, para eso voy a buscarlos a BBDD
 
                 // Buscamos a todos los seguidores
-                System.out.println("Buscando seguidores...");
                 List<UsersEntity> followers = followsRepository.findAllFollowersByUserId(userId);
 
                 // De cuales de estos seguidores, ya he guardado en cache tu timeline
@@ -80,7 +81,7 @@ public class TwitterBl {
                 }
             }
             catch (Exception e){
-                System.out.println(e.getMessage());
+                logger.warn("Failure while updating cache: {}", e.getMessage());
                 this.redisException = true;
             }
         } else { // no hay usuario
@@ -96,14 +97,15 @@ public class TwitterBl {
         // Cada vez que el usuario consulta su timeline, se trae al cache este timeline
         try{
             if(redisException) {
-                System.out.println("Cache cleaning...");
+                logger.info("Cache cleaning...");
                 cacheManager.getCache("timeline").clear();
                 this.redisException = false;
             }
             return tweetsRepository.findTweetsForFollowers(userId);
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+            logger.info("Cache miss");
+            logger.warn("Failure while getting timeline: {}", e.getMessage());
             this.redisException = true;
             return tweetsRepository.findTweetsForFollowersNoCache(userId);
         }
