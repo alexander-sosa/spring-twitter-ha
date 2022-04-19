@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 
 networks:
   ucb-net:
@@ -10,28 +10,36 @@ networks:
           gateway: "10.20.0.1"
 
 services:
+  mysql-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "Tricampeon3"
+      MYSQL_DATABASE: "tweets"
+    networks:
+      - ucb-net
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=Tricampeon3 --execute \"show databases;\""
+      interval: 2s
+      timeout: 20s
+      retries: 10
+
+  redis-cache:
+    image: redis:6.2.1
+    networks:
+      - ucb-net
+
   twitter-spring:
-    image: alexandersosa/node-cache:1.0.2
+    image: alexandersosa/spring-ha-cache:1.0.0
+    depends_on:
+      mysql-db:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
       - "SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/tweets?useSSL=false"
       - "SPRING_DATASOURCE_USERNAME=root"
-      - "SPRING_DATASOURCE_PASSWORD=1234"
+      - "SPRING_DATASOURCE_PASSWORD=Tricampeon3"
       - "SPRING_REDIS_HOST=redis-cache"
       - "SPRING_JPA_HIBERNATE_DDL-AUTO=update"
-    networks:
-      - ucb-net
-
-  mysql-db:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: "1234"
-      MYSQL_DATABASE: "twitter"
-    networks:
-      - ucb-net
-
-  redis-cache:
-    image: redis:6.2.1
     networks:
       - ucb-net
